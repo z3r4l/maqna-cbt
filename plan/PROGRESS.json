@@ -1,0 +1,191 @@
+{
+  "project": "maqna-cbt",
+  "updated_at": "2026-11-21T00:15:00+07:00",
+  "current_stage": null,
+  "current_task": {
+    "task": "Post-S7 tampilan interaktif Benar/Salah dan Mencocokkan di runner siswa",
+    "status": "DONE",
+    "tests": "PASS_WITH_LIMITATION",
+    "evidence": [
+      "True/false table on desktop and readable per-statement cards on mobile; matching SVG connections with drag, tap, keyboard selection, clear action, and unique target enforcement",
+      "npm run test:runner-interactions PASS using isolated API fixture: true/false answer payload and resume, matching interactions, distractor, occupied target, autosave, clear, and failed-save state",
+      "Responsive smoke at 320, 390, 768, and 1280 px passed with no horizontal overflow; desktop/mobile screenshots visually reviewed",
+      "npm run build PASS; existing >500 kB main chunk warning remains",
+      "python plan/scripts/validate_plan.py PASS",
+      "Full CI4/MySQL runner integration smoke NOT_RUN; no API, schema, or migration changes"
+    ],
+    "blockers": []
+  },
+  "previous_maintenance": {
+    "task": "Post-S7 bank soal grouping and UI",
+    "status": "DONE",
+    "tests": "PASS",
+    "evidence": [
+      "additive migration applied and repeated safely",
+      "focused bank HTTP smoke including bank masters PASS",
+      "QST HTTP regression PASS",
+      "PHPUnit 6 tests/9 assertions PASS",
+      "final Vite build PASS",
+      "full browser E2E after rich editor PASS",
+      "focused bank browser 320/390/1280 PASS",
+      "plan validation PASS"
+    ],
+    "blockers": []
+  },
+  "maintenance": {
+    "task": "Post-S7 question creation form and Tiptap editor",
+    "status": "DONE",
+    "tests": "PASS",
+    "evidence": [
+      "migrations 000028-000030 applied and rerun safely",
+      "Structured answer and rich HTML sanitizer unit tests PASS",
+      "PHPUnit 6 tests/9 assertions PASS",
+      "structured question API smoke PASS for all five types, distractor matching, snapshots, scoring, manual release, legacy data, JSON/DOCX/ZIP transfer, and private device images in stimulus/options",
+      "Vite production build PASS",
+      "full Edge E2E PASS",
+      "matching runner and question bank browser flows PASS at 320/390/1280px",
+      "plan validation PASS"
+    ],
+    "blockers": []
+  },
+  "stages": {
+    "S0": {
+      "status": "DONE",
+      "tests": "PASS",
+      "evidence": [
+        "migrate --all twice",
+        "PHPUnit 6 tests/9 assertions",
+        "AUTH HTTP smoke PASS",
+        "Vite build PASS",
+        "Edge UI smoke 320/390/1280 PASS"
+      ],
+      "blockers": []
+    },
+    "S1": {
+      "status": "DONE",
+      "tests": "PASS",
+      "evidence": [
+        "migrate --all twice, 31 foreign keys and 29 indexed columns checked",
+        "PHPUnit 6 tests/9 assertions",
+        "ACD-01..03 HTTP smoke PASS",
+        "Vite build PASS",
+        "Edge UI smoke CRUD at 390/1280 PASS"
+      ],
+      "blockers": []
+    },
+    "S2": {
+      "status": "DONE",
+      "tests": "PASS",
+      "evidence": [
+        "migrate --all twice",
+        "PHPUnit 6 tests/9 assertions",
+        "QST-01..03 HTTP smoke PASS",
+        "Vite build PASS",
+        "Edge teacher create/publish 390px PASS"
+      ],
+      "blockers": []
+    },
+    "S3": {
+      "status": "DONE",
+      "tests": "PASS",
+      "evidence": [
+        "migrate --all twice",
+        "PHPUnit 6 tests/9 assertions",
+        "EXM-01..05 HTTP smoke PASS",
+        "Vite build PASS",
+        "Edge exam wizard/publish 390px PASS"
+      ],
+      "blockers": []
+    },
+    "S4": {
+      "status": "DONE",
+      "tests": "PASS",
+      "evidence": [
+        "migrate --all twice and Spark expiry command",
+        "PHPUnit 6 tests/9 assertions",
+        "ATT-01..06 HTTP/concurrency smoke PASS",
+        "Vite build PASS",
+        "Edge runner autosave/reload/submit 320/390/1280 PASS"
+      ],
+      "blockers": []
+    },
+    "S5": {
+      "status": "DONE",
+      "tests": "PASS",
+      "evidence": [
+        "migrate --all twice",
+        "PHPUnit 6 tests/9 assertions",
+        "RES-01..05 HTTP smoke PASS",
+        "ATT regression PASS",
+        "Vite build PASS",
+        "Edge result/report UI smoke PASS"
+      ],
+      "blockers": []
+    },
+    "S6": {
+      "status": "DONE",
+      "tests": "PASS",
+      "evidence": [
+        "migrate --all twice",
+        "PHPUnit 6 tests/9 assertions",
+        "11 HTTP smoke scripts S0-S6 PASS including EXT-01..07",
+        "Vite build PASS",
+        "Edge CSV/KaTeX/runner/report smoke PASS"
+      ],
+      "blockers": []
+    },
+    "S7": {
+      "status": "DONE",
+      "tests": "PASS",
+      "evidence": [
+        "migrate --all twice; proctor:purge PASS",
+        "PHPUnit 6 tests/9 assertions",
+        "14 HTTP smoke scripts S0-S7 PASS after final heartbeat change including ADV-01..05",
+        "Vite build PASS",
+        "Edge revision/proctor/analytics/runner/reviewer smoke PASS after final heartbeat change",
+        "plan validation PASS"
+      ],
+      "blockers": []
+    }
+  },
+  "features": {
+    "FR-01": "DONE",
+    "FR-02": "DONE",
+    "FR-03": "DONE",
+    "FR-04": "DONE",
+    "FR-05": "DONE",
+    "FR-06": "DONE",
+    "FR-07": "DONE",
+    "FR-08": "DONE",
+    "FR-09": "DONE",
+    "FR-10": "DONE",
+    "FR-11": "DONE",
+    "FR-12": "DONE",
+    "FR-13": "DONE",
+    "FR-14": "DONE",
+    "FR-15": "DONE",
+    "FR-16": "DONE",
+    "FR-17": "DONE",
+    "FR-18": "DONE",
+    "FR-19": "DONE",
+    "FR-20": "DONE",
+    "FR-21": "DONE",
+    "FR-22": "DONE",
+    "FR-23": "DONE",
+    "FR-24": "DONE",
+    "FR-25": "DONE",
+    "FR-26": "DONE",
+    "FR-27": "DONE",
+    "FR-28": "DONE",
+    "FR-29": "DONE",
+    "FR-30": "DONE",
+    "FR-31": "DONE",
+    "FR-32": "DONE",
+    "FR-33": "DONE",
+    "FR-34": "DONE",
+    "FR-35": "DONE",
+    "FR-36": "DONE",
+    "FR-37": "DONE",
+    "FR-38": "DONE"
+  }
+}

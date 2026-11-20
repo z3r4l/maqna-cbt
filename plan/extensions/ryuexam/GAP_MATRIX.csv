@@ -1,0 +1,49 @@
+id,source_menu,reference_feature,prior_plan_mapping,comparison,priority,stage,roles,acceptance_summary,enabled_by_default,risk
+RY-001,Dashboard,Tabel token ujian + filter status/mapel/kelas + salin token,FR-33/FR-20,EXTEND,P1,S8,school_admin;teacher;proctor,Filter scoped; token hanya untuk role yang diizinkan; copy satu tindakan pengguna.,true,MEDIUM
+RY-002,Dashboard,Bagikan token terpilih via WhatsApp dengan aksi eksplisit,None,NEW,P2,S10,school_admin;teacher,Hanya compose link/pesan atas aksi user; tanpa otomatis kirim; tanpa password.,false,MEDIUM
+RY-003,Data Kelas,Ruang ujian dan penempatan siswa per jadwal,S1 rombel (beda dari ruang),NEW,P1,S8,school_admin,Ruang terpisah dari rombel; assignment scoped sekolah dan tahun.,true,LOW
+RY-004,Data Siswa,Nomor peserta ujian per siswa/per ujian,S1 siswa,EXTEND,P1,S8,school_admin,Nomor peserta unik dalam scope kegiatan; tidak menimpa NIS/username.,true,LOW
+RY-005,Data Siswa,"Filter status login, pencarian, pagination",FR-03,EXTEND,P1,S8,school_admin;proctor,Status last_active akurat dan aman; pencarian terotorisasi; pagination server.,true,LOW
+RY-006,Data Siswa,Reset login/sesi siswa dengan alasan dan audit,FR-03/FR-38,EXTEND,P1,S8,school_admin;proctor,Revoke sesi terpilih setelah konfirmasi; alasan tercatat; tidak hapus attempt.,true,HIGH
+RY-007,Data Siswa,Import/export siswa plus template dan validasi pratinjau,FR-34/FR-36,VERIFY,P1,S8,school_admin,Preview sebelum commit; error per baris; CSV formula injection aman.,true,MEDIUM
+RY-008,Data Guru,Import/export guru dengan assignment mapel/rombel,FR-03,EXTEND,P1,S8,school_admin,Preview dan mapping; assignment tidak berbasis teks bebas; deduplikasi.,true,MEDIUM
+RY-009,Mata Pelajaran,Import/export mata pelajaran,FR-06,EXTEND,P2,S8,school_admin,Kode mapel unik per sekolah; preview duplikat sebelum commit.,true,LOW
+RY-010,Jenis Ujian,"Master jenis ujian PH, PTS, PAS, PAT, US, TO",None explicit,NEW,P1,S8,school_admin,"CRUD kode unik, archive aman; referensial ke bank/jadwal.",true,LOW
+RY-011,Bank Soal,Bank soal sebagai kontainer reuse lintas jadwal,S2 bank questions / S3 exam,VERIFY,P0,S9,school_admin;teacher,Bank terpisah dari jadwal; draft/edit tidak mengubah snapshot ujian aktif.,true,HIGH
+RY-012,Bank Soal,Pilihan ganda kompleks (jawaban jamak),FR-07 only single correct,NEW,P1,S9,school_admin;teacher,Scoring backend exact-set default; semua opsi snapshot; negative tests.,true,HIGH
+RY-013,Bank Soal,Benar/salah per pernyataan,None,NEW,P1,S9,school_admin;teacher,Setiap baris dinilai deterministik; jawaban kosong jelas.,true,HIGH
+RY-014,Bank Soal,Menjodohkan pasangan,None,NEW,P1,S9,school_admin;teacher,Pasangan stabil dengan randomisasi display; scoring server.,true,HIGH
+RY-015,Bank Soal,"Rich text, gambar, video, LaTeX/KaTeX",FR-08/FR-11,EXTEND,P1,S9,school_admin;teacher,"Sanitasi HTML, URL/embed allowlist; media mobile dan accessible.",true,HIGH
+RY-016,Bank Soal,Import soal Word DOCX dengan aset,FR-10 excel import only,NEW,P1,S9,school_admin;teacher,Parse template; preview; retain inline assets; error soal bukan silently discard.,true,HIGH
+RY-017,Bank Soal,Import/ekspor JSON tervalidasi,FR-10 excel only,NEW,P1,S9,school_admin;teacher,Schema versioned; rejects unknown/malicious payload; atomic preview+commit.,true,HIGH
+RY-018,Bank Soal,Import/backup ZIP bank soal + media,None,NEW,P1,S9,school_admin;teacher,Block zip-slip/bombs; mode append/replace; snapshot dan backup verified.,true,HIGH
+RY-019,Bank Soal,Import kunci jawaban Excel dengan pratinjau,FR-10 import questions,EXTEND,P2,S9,school_admin;teacher,Validasi tipe/key; preview changes; locked if active snapshot; audit.,true,HIGH
+RY-020,Bank Soal,Set poin per item dan normalisasi total,FR-07/FR-30,EXTEND,P1,S9,school_admin;teacher,Skor tetap 0-100; bobot nol/negatif dicegah; hasil lama immutable.,true,HIGH
+RY-021,Bank Soal,Preview siswa sebelum publish,FR-13 wizard,EXTEND,P1,S9,school_admin;teacher,Preview tanpa membocorkan kunci di student route; responsif.,true,LOW
+RY-022,Bank Soal,Unduh naskah/template bank soal tanpa kunci opsional,FR-36 grades export only,NEW,P2,S9,school_admin;teacher,PDF/Word soal scoped; kunci terpisah hanya bagi authorized.,true,MEDIUM
+RY-023,Jadwal Ujian,Token dinamis rotasi terjadwal,FR-20 static token,NEW,P2,S10,school_admin;teacher,"TTL, clock server, offline grace defined; token only extra gate; rate limit.",true,HIGH
+RY-024,Jadwal Ujian,Ubah status jadwal massal dengan guard,FR-13/FR-14,EXTEND,P2,S10,school_admin,Preview affected attempts; no mutation running/completed; confirmation+audit.,true,HIGH
+RY-025,Cetak Kartu Peserta,Kartu peserta PDF filter kelas/ruang/tata letak F4,None,NEW,P1,S10,school_admin,"PDF paginated, logo/no participant; no plaintext password; printable.",true,HIGH
+RY-026,Administrasi,Daftar hadir terisi/kosong cetak PDF,FR-33 reports,NEW,P1,S10,school_admin;proctor,Attendance by exam/class/room; signer metadata; print and PDF.,true,MEDIUM
+RY-027,Administrasi,Berita acara ujian terisi/kosong dan catatan,None,NEW,P1,S10,school_admin;proctor,"Capture time, attendance, supervisor, incident notes; export PDF.",true,MEDIUM
+RY-028,Status Ujian,Tampilan progres/status peserta per ujian + refresh,FR-29 monitoring,VERIFY,P1,S10,school_admin;proctor;teacher,"Scoped polling, status started/submitted/expired, heartbeat TTL.",true,MEDIUM
+RY-029,Status Ujian,Export jawaban siswa dan nilai per ujian,FR-36 export grade,EXTEND,P1,S10,school_admin;teacher,No leak to student; essay text safe; privacy and permission applied.,true,HIGH
+RY-030,Status Ujian,Koreksi esai dari panel status ujian,FR-09 essay grading,VERIFY,P1,S10,school_admin;teacher,Only authorized grader; grading before manual result release; audited.,true,HIGH
+RY-031,Status Ujian,Hitung ulang nilai dengan snapshot/versi revisi,FR-30 scoring,NEW,P2,S10,school_admin,Dry-run impact preview; versioned correction; no silent overwrite released results.,false,CRITICAL
+RY-032,Status Ujian,Reset attempt individual atau massal,FR-17 attempt limit,NEW,P2,S10,school_admin,"Strict explicit approval; backup, reason, reversible policy; never auto-reset.",false,CRITICAL
+RY-033,Analisis Soal,Kesukaran P & daya pembeda DP,FR-37,VERIFY,P1,S11,school_admin;teacher,"Document formulas, sample size warning, scoped analysis.",true,MEDIUM
+RY-034,Analisis Soal,"Sebaran pengecoh, matriks siswa dan export Excel",FR-37 partial,EXTEND,P2,S11,school_admin;teacher,"Aggregates correct, blank, choices; avoid leaking individual public answers.",true,MEDIUM
+RY-035,Pengaturan,"Identitas sekolah, logo, favicon, header soal",School settings partial,EXTEND,P1,S11,superadmin;school_admin,Sanitize uploads; assets school scoped; preview; fallback defaults.,true,MEDIUM
+RY-036,Pengaturan,"PWA manifest/icon 192,512 + tema sidebar",shadcn responsive UI,EXTEND,P2,S11,superadmin;school_admin,Responsive theme tokens; PWA no offline exam claim; no copyrighted assets.,true,MEDIUM
+RY-037,Pengaturan,Kebijakan wajib jawab semua soal per ujian,FR-26 submit,EXTEND,P1,S10,school_admin;teacher,Server confirms completeness; expiry auto-submit still allowed per policy.,true,MEDIUM
+RY-038,Pengaturan,Pengaturan token diperlukan/tidak per ujian,FR-20,EXTEND,P1,S10,school_admin;teacher,Does not bypass login/assignment and exam availability.,true,MEDIUM
+RY-039,Pengaturan,Cegah multi-login dan remote revoke sesi,FR-01/FR-27,EXTEND,P2,S11,superadmin;school_admin,No lost valid attempt on reconnection; configurable per role; audited.,true,HIGH
+RY-040,Pengaturan,Kebijakan anti-cheat: thresholds/auto-logout/auto-submit,FR-28 signals,EXTEND,P2,S11,superadmin;school_admin,Signals not cheating proof; safe default log-only; penalties gated.,false,CRITICAL
+RY-041,Pengaturan,Preset role admin dan granular per-menu permissions,FR-02 RBAC,EXTEND,P1,S11,superadmin,No teacher cross-class access; permission edits audited and cached safely.,true,HIGH
+RY-042,Pengaturan,Backup database SQL,None,NEW,P2,S11,superadmin,Offline encryption/retention/secure access; never credentials exposed.,false,CRITICAL
+RY-043,Pengaturan,Restore database/empty selected datasets,None,NEW,P2,S11,superadmin,Design-only unless explicit manual approval; never executed automatically.,false,CRITICAL
+RY-044,Pengaturan,Maintenance mode for student/teacher with message/end,None,NEW,P2,S11,superadmin,"Whitelist admins, failsafe expiry, preserve active exam if possible.",false,HIGH
+RY-045,Log Pembaruan,In-app changelog/version release notes,plan/CHANGELOG.md only,NEW,P2,S11,superadmin;school_admin;teacher,"Read-only sanitized release history, no secret technical logs.",true,LOW
+RY-046,Petunjuk,Bantuan dalam aplikasi dan unduh template impor,plan documents only,NEW,P2,S11,school_admin;teacher;student,"Help pages per role, local templates and FAQ, no external dependency.",true,LOW
+RY-047,Tentang,"Halaman tentang, versi, dukungan",None,NEW,P2,S11,all,"Brand only maqna-cbt; build version, docs links; no RyuExam branding.",true,LOW
+RY-048,Data Siswa,Aksi bulk aman untuk data siswa/guru dengan pratinjau,FR-03 CRUD,EXTEND,P2,S8,school_admin,Selection scoped/paginated; soft archive; no bulk physical delete by default.,true,HIGH

@@ -1,0 +1,11 @@
+erDiagram
+    EXAM_ASSIGNMENTS ||--o{ EXAM_ATTEMPTS : starts
+    EXAM_ATTEMPTS ||--o{ ATTEMPT_QUESTIONS : contains
+    EXAM_ITEMS ||--o{ ATTEMPT_QUESTIONS : renders
+    ATTEMPT_QUESTIONS ||--o{ ATTEMPT_OPTIONS : permutes
+    ATTEMPT_QUESTIONS ||--o| ATTEMPT_ANSWERS : answered_by
+    ATTEMPT_OPTIONS ||--o{ ATTEMPT_ANSWERS : selected
+    ATTEMPT_QUESTIONS ||--o| ESSAY_GRADES : graded_as
+    EXAM_ATTEMPTS ||--o| ATTEMPT_RESULTS : scored
+    EXAM_ATTEMPTS ||--o{ ATTEMPT_EVENTS : emits
+    EXAMS ||--o{ RESULT_RELEASE_BATCHES : releases

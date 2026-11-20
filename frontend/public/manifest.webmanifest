@@ -1,0 +1,13 @@
+{
+  "name": "maqna-cbt",
+  "short_name": "maqna-cbt",
+  "description": "Sistem ujian sekolah dan madrasah",
+  "start_url": "/dashboard",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#F5F6F7",
+  "theme_color": "#155451",
+  "icons": [
+    { "src": "/maqna-icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+  ]
+}

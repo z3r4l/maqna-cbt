@@ -1,0 +1,26 @@
+﻿permission,superadmin,school_admin,teacher,proctor,student,scope_policy
+system.manage,Yes,No,No,No,No,"Pengaturan aplikasi, autentikasi."
+roles.manage,Yes,No,No,No,No,Penambahan role/permission sensitif.
+academic.manage,Yes,Yes,No,No,No,"Tahun ajaran, semester, tingkat, rombel."
+users.manage,Yes,Yes,No,No,No,Buat/nonaktif siswa & guru di sekolah.
+subjects.manage,Yes,Yes,No,No,No,Master mapel.
+teaching.manage,Yes,Yes,No,No,No,Penugasan guru-mapel-rombel.
+questions.read,Yes,Yes,"Yes, scoped",No,No,Guru: bank soal sendiri atau yang dibagikan eksplisit.
+questions.create,Yes,Yes,"Yes, scoped",No,No,Guru: hanya mapel yang diampu.
+questions.update,Yes,Yes,"Yes, scoped",No,No,Guru: soal miliknya; tidak mengubah snapshot ujian.
+exams.create,Yes,Yes,"Yes, scoped",No,No,Guru: dalam semester/mapel yang diampu.
+exams.update,Yes,Yes,"Yes, scoped",No,No,Hanya draft; guru harus owner.
+exams.assign,Yes,Yes,"Yes, scoped",No,No,Target siswa hanya kelas dalam teaching assignments.
+exams.publish,Yes,Yes,"Yes, scoped",No,No,**Keputusan final:** guru owner + semua kelas diampu.
+exams.close,Yes,Yes,"Yes, scoped",No,No,Admin / guru owner sesuai policy.
+attempts.start,No,No,No,No,Yes,Hanya siswa yang punya `exam_assignment`.
+attempts.save,No,No,No,No,Yes,"Hanya attempt aktif miliknya, sebelum deadline."
+attempts.submit,No,No,No,No,Yes,Hanya attempt miliknya; idempotent.
+attempts.reset,Yes,Yes,No,No,No,"Wajib alasan dan audit, tidak hapus histori."
+monitor.read,Yes,Yes,"Yes, scoped","Yes, scoped",No,P2 full monitoring; P0 status dasar admin/guru.
+results.read,Yes,Yes,"Yes, scoped",No,"Yes, scoped",Siswa hanya hasil sendiri dengan `released_at != null`.
+results.grade,Yes,Yes,"Yes, scoped",No,No,"Essay P1, guru ujian terkait."
+results.release,Yes,Yes,"Yes, scoped",No,No,**Keputusan final:** manual; hanya hasil grade final.
+results.export,Yes,Yes,"Yes, scoped",No,No,"Export P1, filter kelas/mapel milik guru."
+audit.read,Yes,"Yes, scoped",No,No,No,P1; admin terbatas per sekolah.
+profile.update_self,Yes,Yes,Yes,Yes,Yes,"Hanya profil sendiri, bukan role/rombel."

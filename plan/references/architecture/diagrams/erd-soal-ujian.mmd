@@ -1,0 +1,15 @@
+erDiagram
+    SUBJECTS ||--o{ QUESTION_CATEGORIES : has
+    QUESTION_CATEGORIES ||--o{ QUESTION_TOPICS : has
+    SUBJECTS ||--o{ QUESTIONS : has
+    TEACHERS ||--o{ QUESTIONS : authors
+    QUESTIONS ||--o{ QUESTION_OPTIONS : has
+    QUESTIONS ||--o{ QUESTION_ASSETS : attaches
+    SEMESTERS ||--o{ EXAMS : scheduled
+    SUBJECTS ||--o{ EXAMS : assesses
+    EXAMS ||--o{ EXAM_ITEMS : freezes
+    QUESTIONS ||--o{ EXAM_ITEMS : sourced_from
+    EXAMS ||--o{ EXAM_CLASSES : targets
+    CLASS_GROUPS ||--o{ EXAM_CLASSES : target
+    EXAMS ||--o{ EXAM_ASSIGNMENTS : allocates
+    STUDENTS ||--o{ EXAM_ASSIGNMENTS : receives

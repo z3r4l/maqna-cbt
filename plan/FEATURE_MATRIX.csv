@@ -1,0 +1,39 @@
+feature_id,priority,stage,feature,acceptance_summary,enabled_by_default
+FR-01,P0,S0,Login dan logout,Identitas username/email; logout invalidasi sesi; brute-force throttled.,true
+FR-02,P0,S0,Role-based access control,Enforce group+permission+school/teacher/student object scope di setiap endpoint.,true
+FR-03,P0,S1,Manajemen peserta dan pengajar,CRUD/nonaktif siswa/guru; rombel dan assignment; histori tidak terhapus.,true
+FR-04,P0,S0,Reset password,One-time expiring token; anti-enumeration; verified email or admin-assisted flow.,true
+FR-05,P0,S0,Profil dan pengaturan akun,Ubah profil/password; siswa tidak mengubah rombel/NIS sendiri.,true
+FR-06,P0,S1,"Kategori, mata pelajaran, dan topik","Master terstruktur, sekolah/semester/rombel/guru pengampu dan referensial aman.",true
+FR-07,P0,S2,Soal pilihan ganda,"Min 2 opsi, tepat 1 benar; editor & bobot; kunci tidak bocor ke API siswa.",true
+FR-08,P0,S2,Gambar pada soal dan pilihan jawaban,"Upload MIME/size/auth yang aman, preview responsif dan stored path private.",true
+FR-09,P1,S6,Soal essay,Jawaban panjang+rubrik; manual grading; pending_review menahan publikasi hasil.,true
+FR-10,P1,S6,Import soal Excel,"Preview, validasi per baris, duplicate handling, transaksi & ringkasan error.",true
+FR-11,P1,S6,Soal dengan rumus matematika,Render LaTeX aman di form guru dan exam siswa; accessible mobile.,true
+FR-12,P2,S7,Versi dan review soal,Draft/review/approved/archive; update tidak mengubah snapshot ujian.,true
+FR-13,P0,S3,Membuat dan mengedit ujian,"Exam wizard, draft, validasi publish, pembatasan edit setelah attempt.",true
+FR-14,P0,S3,"Durasi, jadwal mulai dan selesai","start_at/end_at & duration; deadline min(started+duration, end_at) dari server.",true
+FR-15,P0,S3,Penugasan peserta ke ujian,Target kelas dan siswa; assignment snapshot; exclude yang tidak berhak.,true
+FR-16,P0,S3,Randomisasi soal dan jawaban,"Backend permutasi per attempt, stabil sepanjang resume/reload.",true
+FR-17,P0,S3,Batas percobaan ujian,Atomic start dan unique active attempt; max_attempts; recovery policy.,true
+FR-18,P0,S3,Konfigurasi passing grade,Per exam 0–100; validasi; hasil ujian dihitung backend.,true
+FR-19,P0,S5,Pengaturan tampilan hasil,Default MANUAL_RELEASE; nilai/kunci/pembahasan tertutup sebelum rilis.,true
+FR-20,P1,S6,Token atau kode akses ujian,"Token tambahan di start dengan throttle, bukan pengganti login.",true
+FR-21,P2,S7,Paket soal berbeda,Paket A/B atau blueprint pool setara scoring; konsisten per attempt.,true
+FR-22,P0,S4,Timer ujian,Server authoritative deadline; expired rejects save dan auto-finalize.,true
+FR-23,P0,S4,Autosave jawaban,"Debounce queue+revision check+status pending/saved/error, no stale overwrites.",true
+FR-24,P0,S4,Navigasi nomor soal,"Sidebar desktop, sheet mobile; status answered/unanswered/marked.",true
+FR-25,P0,S4,Tandai soal untuk ditinjau,Persist mark/unmark; replay on resume; summary before submit.,true
+FR-26,P0,S4,Submit manual dan otomatis,User submit confirm+server expiry command; idempotent finalize.,true
+FR-27,P0,S4,Resume setelah koneksi terputus,Reload returns same attempt/orders/answers/deadline; retry bounded.,true
+FR-28,P2,S7,Deteksi pindah tab,visibilitychange/focus events as signals not proof; throttled privacy-conscious.,true
+FR-29,P2,S7,Monitoring ujian real-time,Scoped admin/proctor/teacher dashboard; polling heartbeat statuses.,true
+FR-30,P0,S5,Penilaian otomatis pilihan ganda,Idempotent server scoring against frozen answer key.,true
+FR-31,P0,S5,Nilai dan status lulus,"0–100, pass threshold, essay pending until graded, stored per attempt.",true
+FR-32,P0,S5,Riwayat ujian peserta,"Only own attempts, unreleased results show status only.",true
+FR-33,P0,S5,Laporan hasil untuk admin,Scope-filter tahun/semester/rombel/mapel/ujian; attendance and grade stats.,true
+FR-34,P1,S6,Import peserta CSV/Excel,Preview and row errors; safe initial credentials; update mode explicit.,true
+FR-35,P1,S6,Review jawaban setelah ujian,Own answer/key/explanation only when release settings permit.,true
+FR-36,P1,S6,Export nilai Excel/PDF,Authorized scoped export; sanitize CSV/Excel formula injection.,true
+FR-37,P2,S7,Analisis kualitas soal,"Difficulty, discrimination, distractors; sample-size warning.",true
+FR-38,P1,S6,Audit log aktivitas,Sanitized trace actor/action/resource/time/impact for sensitive mutations.,true

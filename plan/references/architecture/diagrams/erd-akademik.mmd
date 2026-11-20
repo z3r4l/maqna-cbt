@@ -1,0 +1,15 @@
+erDiagram
+    SCHOOLS ||--o{ ACADEMIC_YEARS : has
+    ACADEMIC_YEARS ||--o{ SEMESTERS : has
+    SCHOOLS ||--o{ SUBJECTS : offers
+    SCHOOLS ||--o{ GRADE_LEVELS : defines
+    ACADEMIC_YEARS ||--o{ CLASS_GROUPS : has
+    GRADE_LEVELS ||--o{ CLASS_GROUPS : contains
+    USERS ||--o| STUDENTS : profile
+    USERS ||--o| TEACHERS : profile
+    CLASS_GROUPS ||--o{ STUDENT_CLASS_MEMBERSHIPS : hosts
+    STUDENTS ||--o{ STUDENT_CLASS_MEMBERSHIPS : enrolls
+    TEACHERS ||--o{ TEACHING_ASSIGNMENTS : teaches
+    SUBJECTS ||--o{ TEACHING_ASSIGNMENTS : subject
+    SEMESTERS ||--o{ TEACHING_ASSIGNMENTS : semester
+    CLASS_GROUPS ||--o{ TEACHING_ASSIGNMENTS : class
