@@ -1,18 +1,19 @@
 {
   "project": "maqna-cbt",
-  "updated_at": "2026-11-21T00:15:00+07:00",
+  "updated_at": "2026-11-21T10:49:00+07:00",
   "current_stage": null,
   "current_task": {
-    "task": "Post-S7 tampilan interaktif Benar/Salah dan Mencocokkan di runner siswa",
+    "task": "Post-S7 seeder 20 soal Dasar RPL kelas X",
     "status": "DONE",
-    "tests": "PASS_WITH_LIMITATION",
+    "tests": "PASS",
     "evidence": [
-      "True/false table on desktop and readable per-statement cards on mobile; matching SVG connections with drag, tap, keyboard selection, clear action, and unique target enforcement",
-      "npm run test:runner-interactions PASS using isolated API fixture: true/false answer payload and resume, matching interactions, distractor, occupied target, autosave, clear, and failed-save state",
-      "Responsive smoke at 320, 390, 768, and 1280 px passed with no horizontal overflow; desktop/mobile screenshots visually reviewed",
-      "npm run build PASS; existing >500 kB main chunk warning remains",
-      "python plan/scripts/validate_plan.py PASS",
-      "Full CI4/MySQL runner integration smoke NOT_RUN; no API, schema, or migration changes"
+      "SmkRplQuestionSeeder creates a separate nonproduction SMK school, class X RPL, teacher assignment and one bank with 20 reviewable draft questions",
+      "Question mix: 8 mcq, 4 multi_mcq, 3 true_false, 3 matching and 2 essay; each question weighs 5 points for 100 total",
+      "php spark db:seed SmkRplQuestionSeeder PASS repeatedly on maqna_cbt_dev; SQL found one normal (default_key NULL) bank, 20 distinct question bodies, expected type counts and no duplicated rows",
+      "SQL integrity checks found 0 objective questions without explanations, 0 essays without rubrics, and 0 invalid option or matching-key sets",
+      "Teacher fixture login and GET /question-banks plus GET /questions?bankId passed through local CI4 API, returning 20 draft questions",
+      "php -l PASS; php vendor/bin/phpunit --no-coverage PASS (6 tests, 9 assertions); python plan/scripts/validate_plan.py PASS",
+      "README documents the standalone command; no schema, API or migration changes"
     ],
     "blockers": []
   },

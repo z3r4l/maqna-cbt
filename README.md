@@ -35,6 +35,8 @@ npm run dev -- --host 127.0.0.1
 
 Open `http://127.0.0.1:5173`. The local seeder creates fake accounts named `admin_demo`, `teacher_demo`, `student_demo`, and `noemail_demo`; all use the fixture-only password `FixtureOnly123!`. Never use these accounts in production.
 
+For a separate SMK sample bank, run `php spark db:seed SmkRplQuestionSeeder` from `backend/` after migrating. It creates the `SMK Contoh` school, class `X-RPL-1`, teacher `teacher_smk_rpl_demo` (same fixture-only password), and 20 **draft** Dasar RPL questions. Review and publish the questions before using them in an exam. The seeder can be rerun without duplicating the bank and refuses production environments.
+
 On the supplied Windows Laragon PHP 8.5, `php_zip.dll` exists but is disabled in `php.ini`. For a local run without changing the global configuration, use `php -d extension=zip -S 127.0.0.1:8081 -t public public/index.php` and run Composer as `php -d extension=zip D:\laragon6\bin\composer\composer.phar install`. In deployment, enable the ZIP extension in the PHP runtime used by the web server. XLSX import/export returns 503 when it is unavailable; CSV and PDF remain available.
 
 ## Verification

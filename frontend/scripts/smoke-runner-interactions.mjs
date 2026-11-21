@@ -122,7 +122,15 @@ try {
   for (const width of [320, 390, 768, 1280]) {
     await desktop.page.setViewportSize({ width, height: 900 });
     assert.equal(await desktop.page.evaluate(() => document.documentElement.scrollWidth > innerWidth), false, `no horizontal overflow at ${width}px`);
-    assert.equal(await desktop.page.locator('.matching-answer-lines').isVisible(), width >= 640, `matching reflows at ${width}px`);
+    assert.equal(await desktop.page.locator('.matching-answer-lines').isVisible(), true, `matching connections remain visible at ${width}px`);
+    const columns = await desktop.page.locator('[data-matching-columns] > section').evaluateAll(sections => sections.map(section => section.getBoundingClientRect().left));
+    assert.ok(columns[1] > columns[0], `matching uses side-by-side columns at ${width}px`);
+    if (width <= 390) {
+      const longCard = desktop.page.getByRole('button', { name: /Pernyataan 3: Teks Eksposisi/ });
+      assert.ok((await longCard.boundingBox()).height > 48, `long statement wraps at ${width}px`);
+      assert.ok(await desktop.page.locator('.matching-answer-lines path').count() >= 2, `saved lines remain visible at ${width}px`);
+      if (screenshotDir) await desktop.page.screenshot({ path: join(screenshotDir, `matching-${width}.png`), fullPage: true });
+    }
   }
   await desktop.context.close();
 
@@ -130,14 +138,38 @@ try {
   assert.equal(await mobile.page.getByRole('table').count(), 0, 'Benar/Salah reflows out of the table on mobile');
   if (screenshotDir) await mobile.page.screenshot({ path: join(screenshotDir, 'true-false-mobile.png'), fullPage: true });
   await mobile.page.getByRole('button', { name: 'Selanjutnya' }).click();
+  assert.equal(await mobile.page.locator('.matching-answer-lines').isVisible(), true, 'mobile shows matching lines');
   const left = mobile.page.getByRole('button', { name: /Pernyataan 1: Teks Prosedur/ });
   const right = mobile.page.getByRole('button', { name: /Jawaban C: Tesis/ });
   await left.click();
   await right.click();
   await mobile.page.locator('[role="status"]:visible').filter({ hasText: 'Jawaban tersimpan' }).first().waitFor();
   assert.deepEqual(mobile.state.saves.at(-1).answer, { '201': 303 });
+  assert.equal(await mobile.page.locator('.matching-answer-lines path').count(), 1, 'mobile draws the saved pair');
+  await left.click();
+  await mobile.page.getByRole('button', { name: /Jawaban A: Tujuan/ }).click();
+  await mobile.page.locator('[role="status"]:visible').filter({ hasText: 'Jawaban tersimpan' }).first().waitFor();
+  assert.deepEqual(mobile.state.saves.at(-1).answer, { '201': 301 }, 'mobile tap changes a pair');
   if (screenshotDir) await mobile.page.screenshot({ path: join(screenshotDir, 'matching-mobile.png'), fullPage: true });
   await mobile.page.getByRole('button', { name: /Lepas pasangan untuk Pernyataan 1/ }).click();
+  await mobile.page.locator('[role="status"]:visible').filter({ hasText: 'Jawaban tersimpan' }).first().waitFor();
+  assert.equal(mobile.state.saves.at(-1).answer, null);
+  const touchStart = await mobile.page.getByRole('button', { name: /Pernyataan 2: Teks Anekdot/ }).locator('[data-matching-dot]').boundingBox();
+  const touchTarget = await mobile.page.getByRole('button', { name: /Jawaban B: Abstraksi/ }).boundingBox();
+  await mobile.page.evaluate(({ start, target }) => {
+    const source = document.elementFromPoint(start.x + start.width / 2, start.y + start.height / 2);
+    source.dispatchEvent(new PointerEvent('pointerdown', { bubbles: true, pointerType: 'touch', button: 0, clientX: start.x + start.width / 2, clientY: start.y + start.height / 2 }));
+    window.dispatchEvent(new PointerEvent('pointermove', { bubbles: true, pointerType: 'touch', clientX: target.x + target.width / 2, clientY: target.y + target.height / 2 }));
+  }, { start: touchStart, target: touchTarget });
+  await mobile.page.waitForTimeout(50);
+  await mobile.page.evaluate(target => window.dispatchEvent(new PointerEvent('pointerup', { bubbles: true, pointerType: 'touch', clientX: target.x + target.width / 2, clientY: target.y + target.height / 2 })), touchTarget);
+  await mobile.page.locator('[role="status"]:visible').filter({ hasText: 'Jawaban tersimpan' }).first().waitFor();
+  assert.deepEqual(mobile.state.saves.at(-1).answer, { '202': 302 }, 'touch drag from the mobile dot connects a pair');
+  await mobile.page.reload();
+  await mobile.page.getByRole('heading', { name: 'Ujian interaksi' }).waitFor();
+  if (await mobile.page.getByRole('button', { name: 'Selanjutnya' }).count()) await mobile.page.getByRole('button', { name: 'Selanjutnya' }).click();
+  assert.equal(await mobile.page.locator('.matching-answer-lines path').count(), 1, 'saved mobile pair resumes with its line after reload');
+  await mobile.page.getByRole('button', { name: /Lepas pasangan untuk Pernyataan 2/ }).click();
   await mobile.page.locator('[role="status"]:visible').filter({ hasText: 'Jawaban tersimpan' }).first().waitFor();
   assert.equal(mobile.state.saves.at(-1).answer, null);
   mobile.state.failNextSave = true;

@@ -94,7 +94,6 @@ export function MatchingAnswerView({ item, attemptId, onChange }: {
     const root = rootRef.current;
     if (!root) return;
     const measure = () => {
-      if (!window.matchMedia('(min-width: 640px)').matches) { setConnections([]); return; }
       const bounds = root.getBoundingClientRect();
       const rows: Connection[] = [];
       Object.entries(answer ?? {}).forEach(([leftId, rightId]) => {
@@ -149,72 +148,57 @@ export function MatchingAnswerView({ item, attemptId, onChange }: {
     if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); action(); }
   };
 
-  const renderLeft = (option: AttemptItem['options'][number], index: number, mobile = false) => {
+  const renderLeft = (option: AttemptItem['options'][number], index: number) => {
     const selectedId = answer?.[String(option.id)];
     const chosen = item.choices.find(choice => choice.id === selectedId);
     const selected = selectedLeft === option.id;
-    return <div key={option.id} className={`relative flex min-w-0 items-stretch gap-1.5 ${mobile ? '' : 'z-[1]'}`}>
-      <div ref={node => { if (!mobile) { if (node) leftRefs.current.set(option.id, node); else leftRefs.current.delete(option.id); } }} role="button" tabIndex={0}
+    return <div key={option.id} className="relative z-[1] flex min-w-0 items-stretch">
+      <div ref={node => { if (node) leftRefs.current.set(option.id, node); else leftRefs.current.delete(option.id); }} role="button" tabIndex={0}
         aria-label={`Pernyataan ${index + 1}: ${plainText(option.body)}`} aria-pressed={selected}
         onClick={() => { if (suppressPointerClick.current) { suppressPointerClick.current = false; return; } selectLeft(option.id); }}
         onKeyDown={event => onKeyActivate(event, () => selectLeft(option.id))}
-        onPointerDown={event => { if (!mobile && event.button === 0) { dragSource.current = option.id; setDragPoint({ x: event.clientX, y: event.clientY }); } }}
-        className={`relative flex min-h-12 min-w-0 flex-1 cursor-pointer select-none items-center gap-3 rounded-[11px] border px-3 py-2.5 text-left text-sm transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#00666B] ${selected ? 'border-[#08777B] bg-[#E6F4F2] ring-1 ring-[#08777B]' : chosen ? 'border-[#08777B] bg-[#F0F8F7]' : 'border-[#D7E3EA] bg-white hover:border-[#70AEB0]'}`}>
-        <span className={`flex size-7 shrink-0 items-center justify-center rounded-[8px] text-xs font-bold ${selected || chosen ? 'bg-[#08777B] text-white' : 'bg-[#EFF4F7] text-[#174B56]'}`}>{index + 1}</span>
-        <span className="min-w-0 flex-1 break-words"><MathText text={option.body} attemptId={attemptId} /></span>
-        <span aria-hidden="true" className={`absolute -right-[7px] top-1/2 size-[14px] -translate-y-1/2 rounded-full border-2 ${chosen ? 'border-[#08777B] bg-[#08777B]' : selected ? 'border-[#08777B] bg-white' : 'border-[#AFC5D2] bg-white'}`} />
+        onPointerDown={event => { if (event.button === 0 && (event.pointerType === 'mouse' || (event.target as HTMLElement).closest('[data-matching-dot]'))) { dragSource.current = option.id; setDragPoint({ x: event.clientX, y: event.clientY }); } }}
+        className={`relative flex min-h-12 min-w-0 flex-1 cursor-pointer select-none items-center gap-1.5 rounded-[11px] border px-2 py-2 text-left text-xs leading-snug transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#00666B] min-[640px]:gap-3 min-[640px]:px-3 min-[640px]:py-2.5 min-[640px]:text-sm ${selected ? 'border-[#08777B] bg-[#E6F4F2] ring-1 ring-[#08777B]' : chosen ? 'border-[#08777B] bg-[#F0F8F7]' : 'border-[#D7E3EA] bg-white hover:border-[#70AEB0]'}`}>
+        <span className={`flex size-6 shrink-0 items-center justify-center rounded-[7px] text-xs font-bold min-[640px]:size-7 min-[640px]:rounded-[8px] ${selected || chosen ? 'bg-[#08777B] text-white' : 'bg-[#EFF4F7] text-[#174B56]'}`}>{index + 1}</span>
+        <span className="min-w-0 flex-1 break-words [overflow-wrap:anywhere]"><MathText text={option.body} attemptId={attemptId} /></span>
+        <span data-matching-dot aria-hidden="true" className="absolute -right-4 top-1/2 z-[2] flex size-8 -translate-y-1/2 items-center justify-center touch-none"><span className={`size-[14px] rounded-full border-2 ${chosen ? 'border-[#08777B] bg-[#08777B]' : selected ? 'border-[#08777B] bg-white' : 'border-[#AFC5D2] bg-white'}`} /></span>
       </div>
       {chosen && <button type="button" aria-label={`Lepas pasangan untuk Pernyataan ${index + 1}`} onClick={() => removePair(option.id)}
-        className="flex size-11 shrink-0 items-center justify-center rounded-lg text-[#38576A] hover:bg-[#EEF5F6] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#00666B] min-[640px]:absolute min-[640px]:-left-5 min-[640px]:-top-3 min-[640px]:z-10 min-[640px]:rounded-full"><span aria-hidden="true" className="min-[640px]:flex min-[640px]:size-5 min-[640px]:items-center min-[640px]:justify-center min-[640px]:rounded-full min-[640px]:border min-[640px]:border-[#C9D8E0] min-[640px]:bg-white">×</span></button>}
-      {mobile && chosen && <span className="sr-only">Pasangan: {plainText(chosen.body)}</span>}
+        className="absolute -left-5 -top-3 z-10 flex size-11 items-center justify-center rounded-full text-[#38576A] hover:bg-[#EEF5F6] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#00666B]"><span aria-hidden="true" className="flex size-5 items-center justify-center rounded-full border border-[#C9D8E0] bg-white">×</span></button>}
+      {chosen && <span className="sr-only">Pasangan: {plainText(chosen.body)}</span>}
     </div>;
   };
 
-  const renderRight = (choice: AttemptItem['choices'][number], index: number, mobile = false) => {
+  const renderRight = (choice: AttemptItem['choices'][number], index: number) => {
     const usedBy = Object.entries(answer ?? {}).find(([, selected]) => selected === choice.id)?.[0];
     const active = selectedLeft !== null;
     const selected = selectedLeft !== null && answer?.[String(selectedLeft)] === choice.id;
-    return <div key={choice.id} ref={node => { if (!mobile) { if (node) rightRefs.current.set(choice.id, node); else rightRefs.current.delete(choice.id); } }}
+    return <div key={choice.id} ref={node => { if (node) rightRefs.current.set(choice.id, node); else rightRefs.current.delete(choice.id); }}
       role="button" tabIndex={0} data-matching-choice={choice.id} aria-label={`Jawaban ${String.fromCharCode(65 + index)}: ${plainText(choice.body)}`}
       aria-disabled={Boolean(usedBy && !selected)} aria-pressed={selected}
       onClick={() => { if (selectedLeft !== null) selectRight(choice.id); }}
       onKeyDown={event => onKeyActivate(event, () => selectRight(choice.id))}
-      className={`relative z-[1] flex min-h-12 min-w-0 cursor-pointer select-none items-center gap-3 rounded-[11px] border px-3 py-2.5 text-sm transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#00666B] ${selected || usedBy ? 'border-[#08777B] bg-[#E6F4F2]' : active ? 'border-[#70AEB0] bg-white hover:bg-[#F0F8F7]' : 'border-[#D7E3EA] bg-white'}`}>
+      className={`relative z-[1] flex min-h-12 min-w-0 cursor-pointer select-none items-center gap-1.5 rounded-[11px] border px-2 py-2 text-xs leading-snug transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#00666B] min-[640px]:gap-3 min-[640px]:px-3 min-[640px]:py-2.5 min-[640px]:text-sm ${selected || usedBy ? 'border-[#08777B] bg-[#E6F4F2]' : active ? 'border-[#70AEB0] bg-white hover:bg-[#F0F8F7]' : 'border-[#D7E3EA] bg-white'}`}>
       <span aria-hidden="true" className={`absolute -left-[7px] top-1/2 size-[14px] -translate-y-1/2 rounded-full border-2 ${usedBy ? 'border-[#08777B] bg-[#08777B]' : active ? 'border-[#08777B] bg-white' : 'border-[#C8D7E0] bg-white'}`} />
-      <span className={`flex size-7 shrink-0 items-center justify-center rounded-[8px] text-xs font-bold ${usedBy ? 'bg-[#08777B] text-white' : 'bg-[#EFF4F7] text-[#174B56]'}`}>{String.fromCharCode(65 + index)}</span>
-      <span className="min-w-0 flex-1 break-words"><MathText text={choice.body} attemptId={attemptId} /></span>
+      <span className={`flex size-6 shrink-0 items-center justify-center rounded-[7px] text-xs font-bold min-[640px]:size-7 min-[640px]:rounded-[8px] ${usedBy ? 'bg-[#08777B] text-white' : 'bg-[#EFF4F7] text-[#174B56]'}`}>{String.fromCharCode(65 + index)}</span>
+      <span className="min-w-0 flex-1 break-words [overflow-wrap:anywhere]"><MathText text={choice.body} attemptId={attemptId} /></span>
     </div>;
   };
 
   return <div className="mt-4">
     <p className="mb-3 rounded-lg border border-[#D7E3EA] bg-[#F5F9FA] px-3 py-2.5 text-sm text-[#243957]">Tarik titik dari pernyataan ke jawaban yang tepat, atau pilih kedua sisi.</p>
-    <div className="hidden min-[640px]:block">
-      <div ref={rootRef} className="relative">
+    <div ref={rootRef} className="relative min-w-0">
         <svg aria-hidden="true" className="matching-answer-lines pointer-events-none absolute inset-0 z-0 size-full overflow-visible">
           {connections.map((line, index) => {
-            const distance = Math.max(24, (line.target.x - line.source.x) * 0.45);
+            const distance = Math.max(8, (line.target.x - line.source.x) * 0.4);
             return <path key={index} d={`M ${line.source.x} ${line.source.y} C ${line.source.x + distance} ${line.source.y}, ${line.target.x - distance} ${line.target.y}, ${line.target.x} ${line.target.y}`}
               fill="none" stroke="#08777B" strokeWidth="3" strokeDasharray={line.preview ? '5 4' : undefined} strokeLinecap="round" />;
           })}
         </svg>
-        <div className="grid grid-cols-2 gap-x-16 gap-y-2.5">
-          <div className="space-y-2.5">{item.options.map((option, index) => renderLeft(option, index))}</div>
-          <div className="space-y-2.5">{item.choices.map((choice, index) => renderRight(choice, index))}</div>
+        <div data-matching-columns className="grid grid-cols-[minmax(0,1fr)_minmax(0,1fr)] gap-x-7 min-[640px]:gap-x-16">
+          <section aria-label="Pernyataan" className="min-w-0 space-y-2.5">{item.options.map((option, index) => renderLeft(option, index))}</section>
+          <section aria-label="Pilihan jawaban" className="min-w-0 space-y-2.5">{item.choices.map((choice, index) => renderRight(choice, index))}</section>
         </div>
-      </div>
-    </div>
-    <div className="space-y-4 min-[640px]:hidden">
-      <section aria-label="Pernyataan" className="space-y-2.5">
-        <h3 className="text-sm font-semibold text-[#174B56]">Pernyataan</h3>
-        {item.options.map((option, index) => <div key={option.id} className="space-y-1.5">
-          {renderLeft(option, index, true)}
-          {answer?.[String(option.id)] && <p className="pl-3 text-xs text-[#37586A]">Pasangan: {plainText(item.choices.find(choice => choice.id === answer[String(option.id)])?.body ?? '')}</p>}
-        </div>)}
-      </section>
-      <section aria-label="Pilihan jawaban" className="space-y-2.5">
-        <h3 className="text-sm font-semibold text-[#174B56]">Pilihan jawaban</h3>
-        {item.choices.map((choice, index) => renderRight(choice, index, true))}
-      </section>
     </div>
   </div>;
 }

@@ -1,6 +1,11 @@
 # IMPLEMENTATION STATUS — Codex updates this continuously
 
 ## Current task
+- Task: Post-S7 dialog rumus pada editor soal DONE (2026-11-21 Asia/Jakarta).
+- Changed: replaced the LaTeX prompt with an internal KaTeX dialog, categorized symbol/template palette, inline/display modes, validated live preview, and editing for inserted math nodes. Legacy `$...$` and `$$...$$` content hydrates back into editable math nodes, including formulas in table cells and HTML source mode. Shared safe KaTeX options; no API/schema/migration changes.
+- Verification: `npx tsc --noEmit` and `npm run build` PASS (existing >500 kB chunk warning); `node scripts/smoke-question-banks.mjs` PASS at 320/390/1280 px for invalid-LaTeX rejection, cancellation, keyboard palette, inline/display insertion, editing and options; saved-preview/editor reload also PASS at 320 px. `node scripts/smoke-ui.mjs` PASS for formula display in the student runner plus autosave/reload/submit at 320/390/1280 px; 320 px dialog screenshot reviewed; `python plan/scripts/validate_plan.py` PASS.
+
+## Previous task
 - Task: Interactive student runner for true/false and matching answers DONE (2026-11-21 Asia/Jakarta).
 - Changed: true/false now uses a desktop table and mobile answer cards; matching uses SVG connections with drag, tap, keyboard, and clear controls on desktop/mobile. Existing answer payload, autosave and backend are unchanged.
 - Verification: `npm run test:runner-interactions` PASS (mock API, Edge headless; interaction, uniqueness, autosave, clear, resume, failed-save state and 320/390/768/1280 px overflow); screenshot review desktop/mobile PASS; `npm run build` PASS (existing >500 kB chunk warning); `python plan/scripts/validate_plan.py` PASS. Full CI4/MySQL runner smoke NOT RUN.
@@ -213,3 +218,27 @@ At each stage start/end, update the table above and append:
 - Tests run (commands + PASS/FAIL/NOT_RUN): `php -l` PASS; `php spark routes` confirms preview asset route; `composer test -- --no-coverage` PASS (6 tests, 9 assertions); `python tests/smoke_exam_bank_schedules.py` PASS; `python tests/smoke_s9_structured.py` PASS before added focused assertions; targeted API check for `/exams/301/preview` schema/key privacy PASS; `npx tsc --noEmit` PASS; approved `npm run build` PASS; `node scripts/smoke-exam-preview.mjs` PASS at 320/390/1280px. Full `npm run test:e2e` ran through existing UI suites, then exited at `smoke-exam-schedules.mjs` because `127.0.0.1:5174` was not running. A later structured API smoke rerun stopped on unrelated ZIP import fixture HTTP 422 before completing.
 - Known issues: direct scoped image route was added and route-registered; `/exams/301` currently has no preview image, so image bytes/archived-image behavior were not exercised in this turn. E2E schedule smoke needs its expected Vite server on port 5174. Build has existing >500 kB bundle warning.
 - Next action: rerun the schedule E2E with its configured server and add archived-image fixture coverage when available.
+
+### Post-S7 – 2026-11-21 10:27 [Asia/Jakarta]
+- Status: DONE (tampilan Mencocokkan dua kolom pada mobile; status tahap S0–S7 tidak berubah)
+- FR IDs: FR-22, FR-23 (interaksi dan penyimpanan jawaban siswa)
+- Changed files: `frontend/src/components/StructuredAnswers.tsx`, `frontend/scripts/smoke-runner-interactions.mjs`, `plan/STATUS.md`, `plan/PROGRESS.json`, `plan/QA_REPORT.md`, `plan/CHANGELOG.md`
+- Tests run: `npm run test:runner-interactions` PASS; `npm run build` PASS; `python plan/scripts/validate_plan.py` PASS. Screenshot browser 320 dan 390 px diperiksa; tidak ada gulir horizontal pada 320/390/768/1280 px.
+- Known issues: smoke menggunakan fixture API lokal tiruan; integrasi layanan CI4/MySQL langsung tidak dijalankan untuk perubahan UI ini. Peringatan bundle >500 kB tetap ada.
+- Next action: tidak ada perubahan API atau migrasi yang diperlukan.
+
+### Post-S7 – 2026-11-21 10:43 [Asia/Jakarta]
+- Status: IN_PROGRESS (seeder bank soal Dasar RPL kelas X)
+- FR IDs: FR-07, FR-08
+- Intended files: `backend/app/Database/Seeds/SmkRplQuestionSeeder.php`, `plan/STATUS.md`, `plan/PROGRESS.json`, `plan/QA_REPORT.md`, `plan/CHANGELOG.md`
+- Planned checks: `php -l`; `php spark db:seed SmkRplQuestionSeeder` dua kali pada database pengembangan; integritas bank, opsi, kunci, rubrik, dan relasi; akses bank guru jika layanan tersedia; `python plan/scripts/validate_plan.py`.
+- Known issues: belum ada hasil pengujian untuk tugas ini.
+- Next action: buat seeder nonproduksi yang idempoten dan tidak mengubah sekolah demo VII–VIII.
+
+### Post-S7 – 2026-11-21 10:49 [Asia/Jakarta]
+- Status: DONE (seeder 20 soal Dasar RPL kelas X; status tahap S0–S7 tidak berubah)
+- FR IDs: FR-07, FR-08
+- Changed files: `backend/app/Database/Seeds/SmkRplQuestionSeeder.php`, `README.md`, `plan/STATUS.md`, `plan/PROGRESS.json`, `plan/QA_REPORT.md`, `plan/CHANGELOG.md`
+- Tests run: `php -l app/Database/Seeds/SmkRplQuestionSeeder.php` PASS; `php spark migrate:status` menunjukkan seluruh migrasi terkait terpasang; `php spark db:seed SmkRplQuestionSeeder` berulang kali PASS pada `maqna_cbt_dev`; query SQL menemukan satu bank normal (`default_key` NULL), 20 soal berbeda, komposisi 8/4/3/3/2, total 100 poin, tanpa kunci/relasi opsi tidak valid, tanpa penjelasan/rubrik kosong. Login guru demo dan pembacaan bank serta 20 soal melalui API lokal PASS. `php vendor/bin/phpunit --no-coverage` PASS (6 tes, 9 asersi); `python plan/scripts/validate_plan.py` PASS.
+- Known issues: data seeder hanya untuk lingkungan nonproduksi. Tidak ada siswa atau ujian SMK yang dibuat; soal tetap draf hingga ditinjau dan diterbitkan guru.
+- Next action: tinjau isi soal melalui akun guru `teacher_smk_rpl_demo` sebelum menerbitkan bank untuk ujian.

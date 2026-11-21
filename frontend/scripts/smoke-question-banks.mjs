@@ -6,7 +6,7 @@ if (process.env.BANK_SCREENSHOTS) mkdirSync(process.env.BANK_SCREENSHOTS, { recu
 
 const browser = await chromium.launch({ executablePath: process.env.BROWSER_EXECUTABLE ?? 'C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe', headless: true });
 try {
-  for (const width of [320, 390, 1280]) {
+  for (const width of (process.env.BANK_WIDTHS ?? '320,390,1280').split(',').map(Number)) {
     const context = await browser.newContext({ viewport: { width, height: 844 } });
     const page = await context.newPage();
     await page.goto('http://127.0.0.1:5173/login');
@@ -44,11 +44,59 @@ try {
     const stimulusEditor = editor.locator('.question-editor').first();
     await stimulusEditor.getByRole('button', { name: 'Sisipkan tabel' }).click();
     await editor.locator('.tiptap table').waitFor();
-    page.once('dialog', dialog => dialog.accept('x^2'));
     await stimulusEditor.getByRole('button', { name: 'Rumus' }).click();
+    const formulaDialog = page.getByRole('dialog', { name: 'Editor Rumus Matematika' });
+    await formulaDialog.waitFor();
+    const formulaCode = formulaDialog.getByRole('textbox', { name: 'Kode Rumus LaTeX' });
+    await formulaCode.fill('\\notARealCommand');
+    assert.equal(await formulaDialog.getByRole('button', { name: 'Sisipkan Rumus ke Soal' }).isDisabled(), true, 'invalid LaTeX cannot be inserted');
+    await formulaDialog.getByRole('button', { name: 'Batal' }).click();
+    assert.equal(await formulaDialog.count(), 0, 'cancel closes the formula dialog');
+    await stimulusEditor.getByRole('button', { name: 'Rumus' }).click();
+    const reopenedFormula = page.getByRole('dialog', { name: 'Editor Rumus Matematika' });
+    const operationTab = reopenedFormula.getByRole('tab', { name: 'Operasi & Simbol' });
+    await operationTab.focus();
+    await page.keyboard.press('Enter');
+    assert.equal(await operationTab.getAttribute('aria-selected'), 'true', 'palette categories work with keyboard');
+    await reopenedFormula.getByRole('button', { name: 'Tambah kurang' }).click();
+    assert.match(await formulaCode.inputValue(), /\\pm/, 'category templates can be selected');
+    await operationTab.focus();
+    await page.keyboard.press('ArrowRight');
+    assert.equal(await reopenedFormula.getByRole('tab', { name: 'Huruf Yunani' }).getAttribute('aria-selected'), 'true', 'palette tabs support arrow navigation');
+    for (const name of ['Kalkulus & Vektor', 'Matriks & Sistem']) {
+      await page.keyboard.press('ArrowRight');
+      assert.equal(await reopenedFormula.getByRole('tabpanel').locator('button').count() > 0, true, `${name} has usable templates`);
+    }
+    await page.keyboard.press('ArrowRight');
+    assert.equal(await reopenedFormula.getByRole('tab', { name: 'Pecahan & Akar' }).getAttribute('aria-selected'), 'true', 'palette arrow navigation wraps');
+    await reopenedFormula.getByRole('button', { name: /Pangkat dua/ }).click();
+    assert.match(await formulaCode.inputValue(), /\^\{2\}/, 'palette inserts a LaTeX template');
+    await formulaCode.fill('x^2');
+    await reopenedFormula.getByText('Valid LaTeX').waitFor();
+    await reopenedFormula.getByRole('radio', { name: 'Baris Baru / Display' }).check();
+    if (process.env.BANK_SCREENSHOTS) await page.screenshot({ path: `${process.env.BANK_SCREENSHOTS}/question-math-${width}.png` });
+    await reopenedFormula.getByRole('button', { name: 'Sisipkan Rumus ke Soal' }).click();
     await stimulusEditor.getByRole('button', { name: 'Sunting HTML' }).click();
     assert.match(await editor.getByRole('textbox', { name: 'Pertanyaan HTML' }).inputValue(), /<table/i, 'HTML mode keeps tables');
+    assert.match(await editor.getByRole('textbox', { name: 'Pertanyaan HTML' }).inputValue(), /\$\$x\^2\$\$/, 'display math keeps the legacy delimiter format');
     await stimulusEditor.getByRole('button', { name: 'Tutup HTML' }).click();
+    await stimulusEditor.locator('.tiptap-mathematics-render').first().click();
+    const editFormula = page.getByRole('dialog', { name: 'Editor Rumus Matematika' });
+    assert.equal(await editFormula.getByRole('textbox', { name: 'Kode Rumus LaTeX' }).inputValue(), 'x^2', 'existing formula opens for editing');
+    await editFormula.getByRole('textbox', { name: 'Kode Rumus LaTeX' }).fill('x^3');
+    await editFormula.getByRole('button', { name: 'Sisipkan Rumus ke Soal' }).click();
+    await stimulusEditor.getByRole('button', { name: 'Sunting HTML' }).click();
+    assert.match(await editor.getByRole('textbox', { name: 'Pertanyaan HTML' }).inputValue(), /\$\$x\^3\$\$/, 'edited display formula keeps storage format');
+    await stimulusEditor.getByRole('button', { name: 'Tutup HTML' }).click();
+    const firstOption = editor.locator('.question-editor').nth(1);
+    await firstOption.getByRole('textbox', { name: 'Pilihan 1' }).fill('Nilai');
+    await firstOption.getByRole('button', { name: 'Rumus' }).click();
+    const optionFormula = page.getByRole('dialog', { name: 'Editor Rumus Matematika' });
+    await optionFormula.getByRole('textbox', { name: 'Kode Rumus LaTeX' }).fill('\\frac{1}{2}');
+    await optionFormula.getByRole('button', { name: 'Sisipkan Rumus ke Soal' }).click();
+    await firstOption.getByRole('button', { name: 'Sunting HTML' }).click();
+    assert.match(await firstOption.getByRole('textbox', { name: 'Pilihan 1 HTML' }).inputValue(), /\$\\frac\{1\}\{2\}\$/, 'inline math is available in answer options');
+    await firstOption.getByRole('button', { name: 'Tutup HTML' }).click();
     await stimulusEditor.getByRole('button', { name: 'Layar penuh' }).click();
     assert.equal(await stimulusEditor.evaluate(node => node.classList.contains('question-editor--fullscreen')), true);
     await stimulusEditor.getByRole('button', { name: 'Layar penuh' }).click();
@@ -58,6 +106,13 @@ try {
     await editor.getByRole('button', { name: 'Simpan draf' }).click();
     await editor.waitFor({ state: 'detached' });
     await page.getByText('Soal bank ' + width + '?').waitFor();
+    const savedQuestion = page.locator('article').filter({ hasText: 'Soal bank ' + width + '?' });
+    await savedQuestion.locator('.katex').waitFor();
+    await savedQuestion.getByRole('button', { name: 'Buka / ubah' }).click();
+    const savedQuestionEditor = page.getByRole('dialog', { name: 'Ubah soal' });
+    await savedQuestionEditor.locator('.tiptap-mathematics-render').first().waitFor();
+    await savedQuestionEditor.getByRole('button', { name: 'Tutup editor' }).click();
+    await savedQuestionEditor.waitFor({ state: 'detached' });
     await page.getByRole('button', { name: 'Buat soal baru' }).click();
     const matchingEditor = page.getByRole('dialog', { name: 'Buat soal baru' });
     await matchingEditor.getByRole('heading', { name: 'Tulis soal' }).waitFor();

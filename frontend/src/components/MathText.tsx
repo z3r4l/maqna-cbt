@@ -1,6 +1,7 @@
 import { createElement, type ReactNode } from 'react';
 import katex from 'katex';
 import 'katex/dist/katex.min.css';
+import { safeKatexOptions } from '@/lib/math';
 
 function mathParts(text: string): ReactNode[] {
   return text.split(/(\$\$[\s\S]+?\$\$|\$[^$\n]+\$)/g).map((part, index) => {
@@ -9,7 +10,7 @@ function mathParts(text: string): ReactNode[] {
     if (!display && !inline) return <span key={index}>{part}</span>;
     try {
       const html = katex.renderToString(part.slice(display ? 2 : 1, display ? -2 : -1),
-        { displayMode: display, throwOnError: true, trust: false, strict: 'error', maxExpand: 100, maxSize: 10 });
+        { ...safeKatexOptions, displayMode: display });
       return <span key={index} className={display ? 'my-2 block max-w-full overflow-x-auto' : 'inline-block max-w-full overflow-x-auto align-middle'} dangerouslySetInnerHTML={{ __html: html }} />;
     } catch {
       return <span key={index} className="font-mono">{part}</span>;
